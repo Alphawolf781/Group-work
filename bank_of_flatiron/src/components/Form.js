@@ -15,7 +15,7 @@ function Form({ onAddTransaction }) {
         fetch("http://localhost:3000/transactions")
             .then(response => response.json())
             .then(transactions => {
-                // Find the highest ID in the existing transactions
+                // Find the highest ID in  the existing transactions
                 const highestId = transactions.reduce((maxId, transaction) => Math.max(maxId, transaction.id), 0);
                 setNextId(highestId + 1); // Set nextId to be the highest ID + 1
 
