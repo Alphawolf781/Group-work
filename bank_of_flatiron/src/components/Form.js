@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import '../App.css';
 
-function Form({onAddTransaction}) {
+function Form({ onAddTransaction }) {
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
     const [amount, setAmount] = useState("");
     const [category, setCategory] = useState("");
     const [nextId, setNextId] = useState(1); // Initialize nextId
-    const[transactions, setTransactions]=useState([])
+    const [transactions, setTransactions] = useState([]);
+    const [error, setError] = useState(""); // State to manage error message
 
     useEffect(() => {
         // Fetch existing transactions and set the nextId
@@ -19,7 +20,7 @@ function Form({onAddTransaction}) {
                 setNextId(highestId + 1); // Set nextId to be the highest ID + 1
 
                 // set transactions
-                setTransactions(transactions)
+                setTransactions(transactions);
             })
             .catch(error => {
                 console.error("Error fetching transactions:", error);
@@ -29,11 +30,19 @@ function Form({onAddTransaction}) {
     function handleSubmit(e) {
         e.preventDefault();
 
+        // Validate form fields
+        if (!description || !date || !amount || !category) {
+            setError("All fields are required.");
+            return;
+        }
+
+        setError(""); // Clear any previous error message
+
         const transactionData = {
             id: nextId, // Use the nextId for the transaction ID
             description,
             date,
-            amount: Number(amount), 
+            amount: Number(amount),
             category
         };
 
@@ -49,7 +58,7 @@ function Form({onAddTransaction}) {
         .then(newTransaction => {
             onAddTransaction(newTransaction);
             // update the transactions state to include the new transaction
-            setTransactions([...transactions, newTransaction])
+            setTransactions([...transactions, newTransaction]);
 
             // Update the next ID for future transactions
             setNextId(nextId + 1);
@@ -68,6 +77,7 @@ function Form({onAddTransaction}) {
     return (
         <div className='App'>
             <form className='form' onSubmit={handleSubmit}>
+                {error && <div className="alert alert-danger">{error}</div>} {/* Display error message */}
                 <div className="mb-3">
                     <label htmlFor="descriptionInput" className="form-label">Description</label>
                     <input
@@ -115,4 +125,3 @@ function Form({onAddTransaction}) {
 }
 
 export default Form;
-  
